@@ -1,0 +1,97 @@
+:root {
+  --primary-color: #d4a017; /* Gold */
+  --secondary-color: #1a1a1a; /* Dark Gray */
+  --background-color: #f8f8f8; /* Off-white */
+  --text-color: #333;
+  --white: #ffffff;
+  --header-height: 70px;
+  --nav-height: 60px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: var(--nav-height); /* Space for bottom nav on mobile */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: var(--secondary-color);
+  text-align: center;
+  font-weight: 600;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+  text-align: center;
+}
+
+.btn:hover {
+  background-color: #b88a10;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 1rem;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: var(--secondary-color);
+}
+
+/* Mobile responsive tweaks */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 15px;
+  }
+}
