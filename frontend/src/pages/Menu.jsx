@@ -7,14 +7,23 @@ const Menu = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_API_URL}/api/categories`)
-            .then(res => res.json())
+        const apiUrl = import.meta.env.VITE_API_URL;
+        console.log('API URL:', apiUrl); // Debug log
+
+        fetch(`${apiUrl}/api/categories`)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
             .then(data => {
                 setCategories(data);
                 setLoading(false);
             })
             .catch(err => {
                 console.error('Error fetching categories:', err);
+                console.error('API URL was:', apiUrl);
                 setLoading(false);
             });
     }, []);
