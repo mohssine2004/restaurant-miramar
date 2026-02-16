@@ -1,11 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap');
+
 :root {
-  --primary-color: #d4a017; /* Gold */
-  --secondary-color: #1a1a1a; /* Dark Gray */
-  --background-color: #f8f8f8; /* Off-white */
+  --primary-color: #d4a017;
+  /* Gold */
+  --secondary-color: #121212;
+  /* Very Dark Gray/Black */
+  --background-color: #f9f9f9;
   --text-color: #333;
   --white: #ffffff;
-  --header-height: 70px;
-  --nav-height: 60px;
+  --header-height: 80px;
+  --nav-height: 65px;
+
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Montserrat', sans-serif;
 }
 
 * {
@@ -15,16 +22,18 @@
 }
 
 body {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: var(--font-body);
   background-color: var(--background-color);
   color: var(--text-color);
   -webkit-font-smoothing: antialiased;
-  padding-bottom: var(--nav-height); /* Space for bottom nav on mobile */
+  padding-bottom: var(--nav-height);
+  line-height: 1.6;
 }
 
 a {
   text-decoration: none;
   color: inherit;
+  transition: all 0.3s ease;
 }
 
 ul {
@@ -43,6 +52,17 @@ img {
   display: block;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  color: var(--secondary-color);
+  font-weight: 700;
+}
+
 /* Utilities */
 .container {
   max-width: 1200px;
@@ -51,47 +71,87 @@ img {
 }
 
 .section-title {
-  font-size: 1.8rem;
-  margin-bottom: 20px;
+  font-size: 2.2rem;
+  margin-bottom: 30px;
   color: var(--secondary-color);
   text-align: center;
-  font-weight: 600;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.section-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background-color: var(--primary-color);
+  margin: 10px auto 0;
 }
 
 .btn {
   display: inline-block;
-  padding: 12px 24px;
-  background-color: var(--primary-color);
-  color: var(--white);
-  border-radius: 8px;
+  padding: 14px 28px;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
   font-weight: 600;
-  transition: background-color 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
   text-align: center;
+  font-size: 0.9rem;
 }
 
 .btn:hover {
-  background-color: #b88a10;
+  background-color: var(--primary-color);
+  color: var(--white);
 }
 
 .input-field {
   width: 100%;
-  padding: 12px;
+  padding: 15px;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-bottom: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
   font-size: 1rem;
+  font-family: var(--font-body);
+  background-color: #fff;
+  transition: border-color 0.3s;
+}
+
+.input-field:focus {
+  border-color: var(--primary-color);
+  outline: none;
 }
 
 .input-label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
+  margin-bottom: 8px;
+  font-weight: 600;
   color: var(--secondary-color);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Glassmorphism Card support */
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  border-radius: 12px;
 }
 
 /* Mobile responsive tweaks */
 @media (max-width: 768px) {
   .container {
     padding: 0 15px;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
   }
 }
