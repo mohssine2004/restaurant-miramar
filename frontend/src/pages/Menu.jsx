@@ -7,7 +7,7 @@ const Menu = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/categories')
+        fetch(`${import.meta.env.VITE_API_URL}/api/categories`)
             .then(res => res.json())
             .then(data => {
                 setCategories(data);

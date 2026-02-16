@@ -10,7 +10,7 @@ const ProductList = () => {
     useEffect(() => {
         // Fetch all products and filter locally (or create a backend endpoint for filtering)
         // For efficiency, we should add a backend endpoint /api/categories/:id/products, but for now we'll fetch all.
-        fetch('http://localhost:5000/api/products')
+        fetch(`${import.meta.env.VITE_API_URL}/api/products`)
             .then(res => res.json())
             .then(data => {
                 const filtered = data.filter(p => p.category_id === parseInt(categoryId));
