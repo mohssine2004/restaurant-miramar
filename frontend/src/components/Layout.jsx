@@ -1,10 +1,11 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Home, UtensilsCrossed, CalendarDays, ShoppingBag, Menu as MenuIcon } from 'lucide-react';
+import { Home, UtensilsCrossed, CalendarDays, ShoppingBag, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const Layout = () => {
     const location = useLocation();
     const [scrolled, setScrolled] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     // Check if we are on the home page to apply special header styles
     const isHome = location.pathname === '/';
@@ -17,11 +18,16 @@ const Layout = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Close menu when route changes
+    useEffect(() => {
+        setMenuOpen(false);
+    }, [location]);
+
     const isActive = (path) => location.pathname === path;
 
     return (
         <div className="layout">
-            {/* Header: Transparent on Home (unless scrolled), Solid elsewhere */}
+            {/* Header */}
             <header className="header" style={{
                 backgroundColor: isHome && !scrolled ? 'transparent' : 'white',
                 color: isHome && !scrolled ? 'white' : 'var(--secondary-color)',
@@ -37,89 +43,156 @@ const Layout = () => {
                 transition: 'all 0.3s ease',
                 boxShadow: isHome && !scrolled ? 'none' : '0 2px 10px rgba(0,0,0,0.05)'
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                    <div className="menu-trigger">
-                        <MenuIcon size={28} />
-                    </div>
+                {/* Logo - Left Side */}
+                <Link to="/" style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    textDecoration: 'none'
+                }}>
+                    <img
+                        src="/images/logo.jpg"
+                        alt="Miramar Logo"
+                        style={{
+                            height: '40px',
+                            width: '40px',
+                            borderRadius: '50%',
+                            objectFit: 'cover',
+                            border: '2px solid var(--primary-color)'
+                        }}
+                    />
+                    <h1 style={{
+                        fontSize: '1.4rem',
+                        margin: 0,
+                        color: 'inherit',
+                        fontFamily: 'var(--font-heading)',
+                        letterSpacing: '1px'
+                    }}>MIRAMAR</h1>
+                </Link>
 
-                    {/* Only show logo text on scroll or non-home pages to keep hero clean, or keep it always if preferred */}
-                    <Link to="/" style={{
+                {/* Hamburger Menu - Right Side */}
+                <button
+                    onClick={() => setMenuOpen(!menuOpen)}
+                    style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '8px',
                         display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        textDecoration: 'none'
-                    }}>
-                        <img
-                            src="/images/logo.jpg"
-                            alt="Miramar Logo"
-                            style={{
-                                height: '40px',
-                                width: '40px',
-                                borderRadius: '50%',
-                                objectFit: 'cover',
-                                border: '2px solid var(--primary-color)'
-                            }}
-                        />
-                        <h1 style={{
-                            fontSize: '1.4rem',
-                            margin: 0,
-                            color: 'inherit',
-                            fontFamily: 'var(--font-heading)',
-                            letterSpacing: '1px'
-                        }}>MIRAMAR</h1>
-                    </Link>
-                </div>
-
-                {/* Desktop Nav (could be hidden on mobile) */}
-                <div className="desktop-nav" style={{ display: 'none' }}>
-                    {/* Add desktop links if needed later */}
-                </div>
+                        flexDirection: 'column',
+                        gap: '5px',
+                        zIndex: 1001
+                    }}
+                    aria-label="Toggle menu"
+                >
+                    <span style={{
+                        width: '28px',
+                        height: '3px',
+                        backgroundColor: 'currentColor',
+                        transition: 'all 0.3s',
+                        transform: menuOpen ? 'rotate(45deg) translateY(8px)' : 'none'
+                    }}></span>
+                    <span style={{
+                        width: '28px',
+                        height: '3px',
+                        backgroundColor: 'currentColor',
+                        transition: 'all 0.3s',
+                        opacity: menuOpen ? 0 : 1
+                    }}></span>
+                    <span style={{
+                        width: '28px',
+                        height: '3px',
+                        backgroundColor: 'currentColor',
+                        transition: 'all 0.3s',
+                        transform: menuOpen ? 'rotate(-45deg) translateY(-8px)' : 'none'
+                    }}></span>
+                </button>
             </header>
+
+            {/* Slide-out Menu */}
+            <div style={{
+                position: 'fixed',
+                top: 0,
+                right: menuOpen ? 0 : '-100%',
+                width: '280px',
+                height: '100vh',
+                backgroundColor: 'white',
+                boxShadow: '-5px 0 25px rgba(0,0,0,0.1)',
+                zIndex: 999,
+                transition: 'right 0.3s ease',
+                paddingTop: 'var(--header-height)',
+                overflow: 'auto'
+            }}>
+                <nav style={{ padding: '30px 0' }}>
+                    <MenuItem
+                        to="/"
+                        icon={<Home size={24} />}
+                        label="Home"
+                        active={isActive('/')}
+                    />
+                    <MenuItem
+                        to="/menu"
+                        icon={<UtensilsCrossed size={24} />}
+                        label="Menu"
+                        active={isActive('/menu')}
+                    />
+                    <MenuItem
+                        to="/reservation"
+                        icon={<CalendarDays size={24} />}
+                        label="Book Table"
+                        active={isActive('/reservation')}
+                    />
+                    <MenuItem
+                        to="/order"
+                        icon={<ShoppingBag size={24} />}
+                        label="Order"
+                        active={isActive('/order')}
+                    />
+                </nav>
+            </div>
+
+            {/* Overlay when menu is open */}
+            {menuOpen && (
+                <div
+                    onClick={() => setMenuOpen(false)}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100vh',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        zIndex: 998,
+                        transition: 'opacity 0.3s ease'
+                    }}
+                />
+            )}
 
             {/* Main Content */}
             <main style={{
                 minHeight: '100vh',
-                paddingTop: isHome ? '0' : 'var(--header-height)'
+                paddingTop: isHome ? '0' : 'var(--header-height)',
+                paddingBottom: '20px' // No bottom nav anymore
             }}>
                 <Outlet />
             </main>
-
-            {/* Bottom Navigation for Mobile */}
-            <nav className="bottom-nav" style={{
-                position: 'fixed',
-                bottom: 0,
-                left: 0,
-                width: '100%',
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(10px)',
-                borderTop: '1px solid rgba(0,0,0,0.05)',
-                display: 'flex',
-                justifyContent: 'space-around',
-                padding: '12px 0',
-                zIndex: 1000,
-                boxShadow: '0 -5px 20px rgba(0,0,0,0.03)'
-            }}>
-                <NavItem to="/" icon={<Home size={22} />} label="Home" active={isActive('/')} />
-                <NavItem to="/menu" icon={<UtensilsCrossed size={22} />} label="Menu" active={isActive('/menu') || isActive('/product')} />
-                <NavItem to="/reservation" icon={<CalendarDays size={22} />} label="Book" active={isActive('/reservation')} />
-                <NavItem to="/order" icon={<ShoppingBag size={22} />} label="Order" active={isActive('/order')} />
-            </nav>
         </div>
     );
 };
 
-const NavItem = ({ to, icon, label, active }) => (
+const MenuItem = ({ to, icon, label, active }) => (
     <Link to={to} style={{
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
-        color: active ? 'var(--primary-color)' : '#999',
-        fontSize: '0.7rem',
-        gap: '6px',
-        textTransform: 'uppercase',
-        letterSpacing: '0.5px',
+        gap: '20px',
+        padding: '18px 30px',
+        textDecoration: 'none',
+        color: active ? 'var(--primary-color)' : 'var(--secondary-color)',
+        backgroundColor: active ? 'rgba(212, 160, 23, 0.1)' : 'transparent',
+        borderLeft: active ? '4px solid var(--primary-color)' : '4px solid transparent',
+        transition: 'all 0.3s',
         fontWeight: active ? '600' : '400',
-        transition: 'color 0.2s'
+        fontSize: '1.1rem'
     }}>
         {icon}
         <span>{label}</span>
