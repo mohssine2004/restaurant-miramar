@@ -1,183 +1,243 @@
-import { MapPin, Clock, Phone, Star, ChevronRight, Share2, Heart } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { MapPin, Clock, Phone, Star, ChevronRight, Heart, Utensils, Eye, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import './home.css';
 
+/* ─────────────── Hero Slides ─────────────── */
+const heroSlides = [
+    {
+        img: '/images/vibe/nightveiw.jpg',
+        title: 'Where the \nSea Meets \nFlavour',
+        sub: 'Experience the finest Mediterranean & Moroccan cuisine with a breathtaking view of the Tangier Bay.',
+    },
+    {
+        img: '/images/vibe/view.jpg',
+        title: 'Dine Above\nthe Horizon',
+        sub: 'Savour every bite while the shimmering Tangier coastline unfolds before you.',
+    },
+    {
+        img: '/images/vibe/veiw.jpg',
+        title: 'A Table\nWith a Story',
+        sub: 'Panoramic marina views, handcrafted dishes and memories that last a lifetime.',
+    },
+];
+
+/* ─────────────── Gallery images ─────────────── */
+const galleryImages = [
+    { src: '/images/vibe/unnamed.jpg', span: 'tall', caption: 'Our Dining Room' },
+    { src: '/images/vibe/unnamed (1).jpg', span: 'normal', caption: 'Cozy Booths' },
+    { src: '/images/vibe/unnamed (2).jpg', span: 'normal', caption: 'Evening Ambience' },
+    { src: '/images/vibe/unnamed (3).jpg', span: 'wide', caption: 'The Terrace' },
+];
+
+/* ─────────────── Popular dishes ─────────────── */
+const dishes = [
+    { img: '/images/img1.png', name: 'Gourmet Burger', price: '85', tag: 'Best Seller', desc: 'Juicy premium beef patty with house sauce & caramelised onions.' },
+    { img: '/images/img2.png', name: 'Seafood Pasta', price: '120', tag: 'Chef\'s Pick', desc: 'Al-dente pasta tossed with fresh seafood in a white wine cream sauce.' },
+    { img: '/images/img5.png', name: 'Grilled Salmon', price: '140', tag: 'Healthy', desc: 'Atlantic salmon fillet grilled to perfection with lemon herb butter.' },
+    { img: '/images/img8.png', name: 'Moroccan Tagine', price: '95', tag: 'Traditional', desc: 'Slow-cooked lamb with preserved lemon, olives and aromatic spices.' },
+];
+
+/* ════════════════ HOME PAGE ════════════════ */
 const Home = () => {
+    const [slide, setSlide] = useState(0);
+    const [likedDishes, setLikedDishes] = useState({});
+    const [visibleDishes, setVisibleDishes] = useState([]);
+
+    /* Auto-advance hero slider */
+    useEffect(() => {
+        const id = setInterval(() => setSlide(s => (s + 1) % heroSlides.length), 5000);
+        return () => clearInterval(id);
+    }, []);
+
+    /* Staggered entrance for dish cards */
+    useEffect(() => {
+        dishes.forEach((_, i) => {
+            setTimeout(() => setVisibleDishes(prev => [...prev, i]), i * 150 + 300);
+        });
+    }, []);
+
+    const toggleLike = (i) => setLikedDishes(prev => ({ ...prev, [i]: !prev[i] }));
+
     return (
         <div className="home-page">
-            {/* Full Screen Hero Section */}
-            <section className="hero" style={{
-                height: '100vh',
-                width: '100%',
-                backgroundImage: 'url(/images/img18.png)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'flex-end', // Align text to bottom like modern apps
-                justifyContent: 'flex-start',
-                paddingBottom: '100px'
-            }}>
-                {/* Dark Overlay Gradient */}
-                <div style={{
-                    position: 'absolute',
-                    top: 0, left: 0, right: 0, bottom: 0,
-                    background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 100%)',
-                    zIndex: 1
-                }}></div>
 
-                {/* Hero Content */}
-                <div className="container" style={{ position: 'relative', zIndex: 2, width: '100%' }}>
-                    <div style={{ color: 'white', maxWidth: '600px' }}>
-                        <div style={{ display: 'flex', gap: '5px', marginBottom: '15px' }}>
-                            {[1, 2, 3, 4, 5].map(i => (
-                                <Star key={i} fill="#d4a017" stroke="#d4a017" size={18} />
-                            ))}
-                            <span style={{ marginLeft: '10px', fontSize: '0.9rem', opacity: 0.9 }}>3.9 (19 reviews)</span>
+            {/* ── HERO SLIDER ── */}
+            <section className="hero-slider">
+                {heroSlides.map((s, i) => (
+                    <div key={i} className={`hero-slide ${i === slide ? 'active' : ''}`}
+                        style={{ backgroundImage: `url(${s.img})` }}>
+                        <div className="hero-overlay" />
+                    </div>
+                ))}
+
+                <div className="hero-content container">
+                    <h1 className="hero-title">
+                        {heroSlides[slide].title.split('\n').map((line, i) => (
+                            <span key={i}>{line}<br /></span>
+                        ))}
+                    </h1>
+                    <p className="hero-sub">{heroSlides[slide].sub}</p>
+                    <div className="hero-actions">
+                        <Link to="/menu" className="btn btn-gold">Explore Menu</Link>
+                        <Link to="/reservation" className="btn btn-outline-white">Book a Table</Link>
+                    </div>
+                </div>
+
+                {/* Dots */}
+                <div className="hero-dots">
+                    {heroSlides.map((_, i) => (
+                        <button key={i} className={`dot ${i === slide ? 'active' : ''}`}
+                            onClick={() => setSlide(i)} />
+                    ))}
+                </div>
+
+                {/* Rating badge */}
+                <div className="hero-rating-badge">
+                    {[1, 2, 3, 4, 5].map(i => <Star key={i} fill="#d4a017" stroke="#d4a017" size={14} />)}
+                    <span>3.9 · 19 reviews</span>
+                </div>
+            </section>
+
+            {/* Info Cards */}
+            <div className="info-strip container">
+                <InfoCard icon={<MapPin size={22} color="var(--primary-color)" />}
+                    title="Visit Us"
+                    line1="168 Ave Mohammed VI, Tangier 90000"
+                    link="Get Directions" href="#" />
+                <InfoCard icon={<Clock size={22} color="var(--primary-color)" />}
+                    title="Opening Hours"
+                    line1="Sunday – Saturday"
+                    line2="7:00 AM – 12:00 AM" />
+                <InfoCard icon={<Phone size={22} color="var(--primary-color)" />}
+                    title="Reservations"
+                    line1="06 61 34 97 12"
+                    link="Book Now" to="/reservation" />
+            </div>
+
+            {/* ── POPULAR DISHES ── */}
+            <section className="dishes-section">
+                <div className="container">
+                    <div className="section-header">
+                        <div>
+                            <span className="section-eyebrow">Handpicked for You</span>
+                            <h2 className="section-title-left">Popular Dishes</h2>
                         </div>
+                        <Link to="/menu" className="see-all-link">See All <ChevronRight size={18} /></Link>
+                    </div>
 
-                        <h1 style={{
-                            fontSize: '3.5rem',
-                            lineHeight: '1.1',
-                            marginBottom: '15px',
-                            color: 'white',
-                            textShadow: '0 2px 10px rgba(0,0,0,0.3)'
-                        }}>
-                            Restaurant Miramar
-                        </h1>
-
-                        <p style={{
-                            fontSize: '1.1rem',
-                            marginBottom: '30px',
-                            opacity: 0.9,
-                            fontFamily: 'var(--font-body)',
-                            maxWidth: '400px'
-                        }}>
-                            Experience the finest flavors of Tangier in an elegant setting.
-                        </p>
-
-                        <div style={{ display: 'flex', gap: '15px' }}>
-                            <Link to="/menu" className="btn" style={{
-                                backgroundColor: 'var(--primary-color)',
-                                color: 'white',
-                                border: 'none',
-                                padding: '15px 35px'
-                            }}>
-                                View Menu
-                            </Link>
-                            <Link to="/reservation" className="btn" style={{
-                                backgroundColor: 'transparent',
-                                color: 'white',
-                                borderColor: 'white'
-                            }}>
-                                Book Table
-                            </Link>
-                        </div>
+                    <div className="dishes-grid">
+                        {dishes.map((d, i) => (
+                            <DishCard key={i} dish={d} index={i}
+                                liked={!!likedDishes[i]}
+                                onLike={() => toggleLike(i)}
+                                visible={visibleDishes.includes(i)} />
+                        ))}
                     </div>
                 </div>
             </section>
 
-            {/* Info Cards - Floating up slightly */}
-            <div className="container" style={{ marginTop: '-60px', position: 'relative', zIndex: 3, marginBottom: '60px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-                    {/* Location Card */}
-                    <div className="glass-card" style={{ padding: '25px', display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
-                        <div style={{ backgroundColor: 'rgba(212, 160, 23, 0.1)', padding: '12px', borderRadius: '50%' }}>
-                            <MapPin size={24} color="var(--primary-color)" />
-                        </div>
-                        <div>
-                            <h3 style={{ fontSize: '1.2rem', marginBottom: '5px' }}>Visit Us</h3>
-                            <p style={{ color: '#666', fontSize: '0.95rem', marginBottom: '10px' }}>168 Ave Mohammed VI, Tangier 90000</p>
-                            <a href="#" style={{ color: 'var(--primary-color)', fontWeight: '600', fontSize: '0.9rem', display: 'flex', alignItems: 'center' }}>
-                                Get Directions <ChevronRight size={16} />
-                            </a>
-                        </div>
-                    </div>
+            {/* ── GALLERY / AMBIENCE ── */}
+            <section className="gallery-section">
+                <div className="container">
+                    <span className="section-eyebrow centered">Step Inside</span>
+                    <h2 className="section-title">Our Ambience</h2>
 
-                    {/* Hours Card */}
-                    <div className="glass-card" style={{ padding: '25px', display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
-                        <div style={{ backgroundColor: 'rgba(212, 160, 23, 0.1)', padding: '12px', borderRadius: '50%' }}>
-                            <Clock size={24} color="var(--primary-color)" />
-                        </div>
-                        <div>
-                            <h3 style={{ fontSize: '1.2rem', marginBottom: '5px' }}>Opening Hours</h3>
-                            <p style={{ color: '#666', fontSize: '0.95rem' }}>Sunday - Saturday</p>
-                            <p style={{ fontWeight: '600', color: 'var(--secondary-color)' }}>7:00 AM – 12:00 AM</p>
-                        </div>
-                    </div>
-
-                    {/* Contact Card */}
-                    <div className="glass-card" style={{ padding: '25px', display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
-                        <div style={{ backgroundColor: 'rgba(212, 160, 23, 0.1)', padding: '12px', borderRadius: '50%' }}>
-                            <Phone size={24} color="var(--primary-color)" />
-                        </div>
-                        <div>
-                            <h3 style={{ fontSize: '1.2rem', marginBottom: '5px' }}>Reservations</h3>
-                            <p style={{ color: '#666', fontSize: '0.95rem', marginBottom: '10px' }}>06 61 34 97 12</p>
-                            <Link to="/reservation" style={{ color: 'var(--primary-color)', fontWeight: '600', fontSize: '0.9rem', display: 'flex', alignItems: 'center' }}>
-                                Call Now <ChevronRight size={16} />
-                            </Link>
-                        </div>
+                    <div className="gallery-grid">
+                        {galleryImages.map((g, i) => (
+                            <div key={i} className={`gallery-item gallery-${g.span}`}>
+                                <img src={g.src} alt={g.caption} />
+                                <div className="gallery-caption">{g.caption}</div>
+                            </div>
+                        ))}
                     </div>
                 </div>
-            </div>
+            </section>
 
-            {/* Popular Items Section */}
-            <div className="container" style={{ paddingBottom: '40px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '30px' }}>
-                    <h2 className="section-title" style={{ width: 'auto', margin: 0, textAlign: 'left' }}>Popular Dishes</h2>
-                    <Link to="/menu" style={{ color: 'var(--primary-color)', fontWeight: '600', display: 'flex', alignItems: 'center' }}>See All <ChevronRight size={18} /></Link>
+            {/* ── EXPERIENCE BANNER ── */}
+            <section className="experience-banner"
+                style={{ backgroundImage: 'url(/images/vibe/nightveiw.jpg)' }}>
+                <div className="experience-overlay" />
+                <div className="experience-content container">
+                    <span className="section-eyebrow">Tangier's Finest</span>
+                    <h2>An Unforgettable Culinary Experience</h2>
+                    <p>Fresh ingredients, passionate chefs, and a panoramic ocean view — this is Miramar.</p>
+                    <Link to="/reservation" className="btn btn-gold">Reserve Your Table</Link>
                 </div>
+            </section>
 
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                    gap: '25px'
-                }}>
-                    <PopularItem img="/images/img1.png" name="Gourmet Burger" price="85" />
-                    <PopularItem img="/images/img2.png" name="Seafood Pasta" price="120" />
-                    <PopularItem img="/images/img5.png" name="Grilled Salmon" price="140" />
-                    <PopularItem img="/images/img8.png" name="Moroccan Tagine" price="95" />
-                </div>
-            </div>
         </div>
     );
 };
 
-const PopularItem = ({ img, name, price }) => (
-    <div style={{
-        borderRadius: '16px',
-        overflow: 'hidden',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
-        backgroundColor: 'white',
-        transition: 'transform 0.3s ease',
-        cursor: 'pointer'
-    }}>
-        <div style={{ position: 'relative', height: '200px' }}>
-            <img src={img} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            <button style={{
-                position: 'absolute',
-                top: '15px',
-                right: '15px',
-                backgroundColor: 'white',
-                borderRadius: '50%',
-                width: '35px',
-                height: '35px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-            }}>
-                <Heart size={18} color="#d4a017" />
-            </button>
-        </div>
-        <div style={{ padding: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <h3 style={{ fontSize: '1.2rem', margin: 0 }}>{name}</h3>
-                <span style={{ fontWeight: '700', color: 'var(--primary-color)' }}>MAD {price}</span>
-            </div>
-            <p style={{ color: '#888', fileSize: '0.9rem', marginBottom: '15px' }}>Freshly prepared with local ingredients.</p>
+/* ─────────────── Sub-components ─────────────── */
+
+const InfoCard = ({ icon, title, line1, line2, link, href, to }) => (
+    <div className="info-card glass-card">
+        <div className="info-icon">{icon}</div>
+        <div>
+            <h3>{title}</h3>
+            <p>{line1}</p>
+            {line2 && <p className="info-highlight">{line2}</p>}
+            {link && to && <Link to={to} className="info-link">{link} <ChevronRight size={14} /></Link>}
+            {link && href && <a href={href} className="info-link">{link} <ChevronRight size={14} /></a>}
         </div>
     </div>
 );
+
+const DishCard = ({ dish, liked, onLike, visible }) => {
+    const [hovered, setHovered] = useState(false);
+
+    return (
+        <div className={`dish-card ${visible ? 'dish-visible' : ''} ${hovered ? 'dish-hovered' : ''}`}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}>
+
+            {/* Image container */}
+            <div className="dish-img-wrap">
+                <img src={dish.img} alt={dish.name} className="dish-img" />
+
+                {/* Tag */}
+                <span className="dish-tag">{dish.tag}</span>
+
+                {/* Like button */}
+                <button className={`dish-like ${liked ? 'liked' : ''}`} onClick={onLike}>
+                    <Heart size={16} fill={liked ? '#d4a017' : 'none'} stroke={liked ? '#d4a017' : '#fff'} />
+                </button>
+
+                {/* Hover overlay with quick-action icons */}
+                <div className="dish-hover-overlay">
+                    <Link to="/menu" className="dish-action-btn" title="View Details">
+                        <Eye size={18} />
+                    </Link>
+                    <Link to="/menu" className="dish-action-btn" title="Order Now">
+                        <ShoppingBag size={18} />
+                    </Link>
+                </div>
+            </div>
+
+            {/* Info */}
+            <div className="dish-info">
+                <div className="dish-top-row">
+                    <h3 className="dish-name">{dish.name}</h3>
+                    <span className="dish-price">MAD {dish.price}</span>
+                </div>
+                <p className="dish-desc">{dish.desc}</p>
+
+                {/* Stars */}
+                <div className="dish-stars">
+                    {[1, 2, 3, 4, 5].map(i => (
+                        <Star key={i} size={12} fill="#d4a017" stroke="#d4a017" />
+                    ))}
+                    <span className="dish-rating-text">5.0</span>
+                </div>
+
+                <Link to="/menu" className="dish-order-btn">
+                    <Utensils size={15} /> Order Now
+                </Link>
+            </div>
+        </div>
+    );
+};
 
 export default Home;

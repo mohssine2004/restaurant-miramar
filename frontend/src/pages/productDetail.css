@@ -1,0 +1,464 @@
+/* ════════════════════════════════════
+   PRODUCT DETAIL — productDetail.css
+════════════════════════════════════ */
+
+.pd-page {
+    min-height: 100vh;
+    background: #f7f7f7;
+    padding-bottom: 40px;
+    position: relative;
+}
+
+/* ── Back button ── */
+.pd-back-btn {
+    position: fixed;
+    top: 20px;
+    left: 16px;
+    z-index: 30;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s;
+}
+
+.pd-back-btn:hover {
+    transform: scale(1.08);
+}
+
+/* ── Two-column layout ── */
+.pd-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+}
+
+.pd-left {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: #111;
+}
+
+.pd-right {
+    padding: 50px 36px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: white;
+    overflow-y: auto;
+}
+
+/* ── Carousel ── */
+.pd-carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.pd-carousel-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+}
+
+.pd-carousel-img.active {
+    opacity: 1;
+}
+
+.pd-no-img {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    background: rgba(212, 160, 23, 0.08);
+}
+
+.pd-arr {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    border: none;
+    cursor: pointer;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: background 0.2s;
+}
+
+.pd-arr:hover {
+    background: white;
+}
+
+.pd-arr-l {
+    left: 14px;
+}
+
+.pd-arr-r {
+    right: 14px;
+}
+
+.pd-dots-row {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 5;
+}
+
+.pd-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s;
+}
+
+.pd-dot.active {
+    background: var(--primary-color);
+    width: 20px;
+    border-radius: 4px;
+}
+
+/* ── Right panel elements ── */
+.pd-category-badge {
+    display: inline-block;
+    background: rgba(212, 160, 23, 0.12);
+    color: var(--primary-color);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+}
+
+.pd-name-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.pd-name {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    color: var(--secondary-color);
+    margin: 0;
+    line-height: 1.15;
+    flex: 1;
+}
+
+.pd-price {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    font-family: var(--font-body);
+    white-space: nowrap;
+    padding-top: 4px;
+}
+
+.pd-stars {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 16px;
+    color: #888;
+    font-size: 0.8rem;
+    font-family: var(--font-body);
+}
+
+.pd-desc {
+    color: #666;
+    line-height: 1.7;
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+}
+
+/* ── Ingredients section ── */
+.pd-ing-section {
+    margin: 4px 0 20px;
+}
+
+.pd-ing-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--secondary-color);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pd-ing-hint {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #aaa;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.pd-ing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+/* ── Ingredient card ── */
+.ing-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: #f5f5f5;
+    border-radius: 14px;
+    padding: 14px 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    border: 2px solid transparent;
+    user-select: none;
+}
+
+.ing-card:hover {
+    background: #eee;
+    transform: translateY(-2px);
+}
+
+.ing-card.ing-selected {
+    background: rgba(212, 160, 23, 0.1);
+    border-color: var(--primary-color);
+}
+
+.ing-icon {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.ing-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #444;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* Checkmark badge */
+.ing-check {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    box-shadow: 0 2px 6px rgba(212, 160, 23, 0.4);
+}
+
+.ing-card.ing-selected .ing-check {
+    display: flex;
+}
+
+/* Crossed-out when deselected */
+.ing-card:not(.ing-selected) .ing-icon {
+    opacity: 0.4;
+    filter: grayscale(1);
+}
+
+.ing-card:not(.ing-selected) .ing-name {
+    color: #aaa;
+    text-decoration: line-through;
+}
+
+/* ── Note ── */
+.pd-note {
+    background: #fff8e1;
+    border-left: 3px solid var(--primary-color);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.88rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* ── Bottom CTA ── */
+.pd-bottom {
+    margin-top: auto;
+    padding-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.pd-qty {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #f5f5f5;
+    border-radius: 30px;
+    padding: 6px 16px;
+}
+
+.pd-qty-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s;
+}
+
+.pd-qty-btn:hover {
+    background: rgba(212, 160, 23, 0.15);
+}
+
+.pd-qty-plus {
+    background: var(--primary-color);
+    color: white;
+}
+
+.pd-qty-plus:hover {
+    background: #b8870f;
+}
+
+.pd-qty-val {
+    font-weight: 800;
+    font-size: 1.1rem;
+    min-width: 20px;
+    text-align: center;
+}
+
+.pd-cta {
+    flex: 1;
+    padding: 15px 20px;
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    border: none;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.pd-cta:hover:not(:disabled) {
+    background: var(--primary-color);
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(212, 160, 23, 0.4);
+}
+
+.pd-cta.pd-cta-added {
+    background: #27ae60;
+    color: white;
+}
+
+/* ── Loader ── */
+.pd-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    gap: 14px;
+    color: #999;
+    font-family: var(--font-body);
+}
+
+.pd-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #eee;
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Responsive: stack on mobile ── */
+@media (max-width: 768px) {
+    .pd-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: 280px auto;
+    }
+
+    .pd-left {
+        position: relative;
+        height: 280px;
+    }
+
+    .pd-right {
+        padding: 28px 20px 32px;
+        border-radius: 24px 24px 0 0;
+        margin-top: -24px;
+        position: relative;
+        z-index: 5;
+    }
+
+    .pd-name {
+        font-size: 1.5rem;
+    }
+
+    .pd-ing-grid {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    }
+
+    .pd-bottom {
+        flex-direction: column;
+    }
+
+    .pd-cta {
+        width: 100%;
+    }
+}
