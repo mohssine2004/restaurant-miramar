@@ -278,18 +278,32 @@
     }
 }
 
-/* ── Responsive ── */
-@media (max-width: 480px) {
+/* ── Responsive: full-width image on mobile ── */
+@media (max-width: 600px) {
+    .pl-grid {
+        padding: 16px 12px;
+        gap: 14px;
+    }
+
+    /* Stack card vertically */
+    .pc-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    /* Image spans full card width */
     .pc-img-wrap {
-        width: 90px;
-        height: 90px;
+        width: 100%;
+        height: 200px;
+        flex-shrink: unset;
     }
 
-    .pc-name {
-        font-size: 0.92rem;
+    .pc-info {
+        padding: 14px 16px;
     }
 
+    /* Hide the side arrow on mobile */
     .pc-arrow {
-        padding: 0 10px;
+        display: none;
     }
 }
