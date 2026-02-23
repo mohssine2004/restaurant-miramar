@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { MapPin, Clock, Phone, Star, ChevronRight, Heart, Utensils, Eye, ShoppingBag } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { MapPin, Clock, Phone, Star, ChevronRight, Heart, Utensils, Eye, ShoppingBag, Quote, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import './home.css';
 
@@ -27,22 +27,15 @@ const galleryImages = [
     { src: '/images/vibe/unnamed.jpg', span: 'tall', caption: 'Our Dining Room' },
     { src: '/images/vibe/unnamed (1).jpg', span: 'normal', caption: 'Cozy Booths' },
     { src: '/images/vibe/unnamed (2).jpg', span: 'normal', caption: 'Evening Ambience' },
-    { src: '/images/vibe/unnamed (3).jpg', span: 'wide', caption: 'The Terrace' },
+    { src: '/images/vibe/unnamed (3).jpg', span: 'normal', caption: 'The Terrace' },
+    { src: '/images/vibe/unnamed (4).jpg', span: 'normal', caption: 'Relaxing Vibes' },
 ];
 
-/* ─────────────── Popular dishes ─────────────── */
-const dishes = [
-    { img: '/images/img1.png', name: 'Gourmet Burger', price: '85', tag: 'Best Seller', desc: 'Juicy premium beef patty with house sauce & caramelised onions.' },
-    { img: '/images/img2.png', name: 'Seafood Pasta', price: '120', tag: 'Chef\'s Pick', desc: 'Al-dente pasta tossed with fresh seafood in a white wine cream sauce.' },
-    { img: '/images/img5.png', name: 'Grilled Salmon', price: '140', tag: 'Healthy', desc: 'Atlantic salmon fillet grilled to perfection with lemon herb butter.' },
-    { img: '/images/img8.png', name: 'Moroccan Tagine', price: '95', tag: 'Traditional', desc: 'Slow-cooked lamb with preserved lemon, olives and aromatic spices.' },
-];
-
-/* ════════════════ HOME PAGE ════════════════ */
 const Home = () => {
     const [slide, setSlide] = useState(0);
     const [likedDishes, setLikedDishes] = useState({});
-    const [visibleDishes, setVisibleDishes] = useState([]);
+    const [popularDishes, setPopularDishes] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     /* Auto-advance hero slider */
     useEffect(() => {
@@ -50,14 +43,21 @@ const Home = () => {
         return () => clearInterval(id);
     }, []);
 
-    /* Staggered entrance for dish cards */
+    /* Fetch popular dishes from API */
     useEffect(() => {
-        dishes.forEach((_, i) => {
-            setTimeout(() => setVisibleDishes(prev => [...prev, i]), i * 150 + 300);
-        });
+        fetch(`${import.meta.env.VITE_API_URL}/api/products/popular`)
+            .then(res => res.json())
+            .then(data => {
+                setPopularDishes(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error('Error fetching popular dishes:', err);
+                setLoading(false);
+            });
     }, []);
 
-    const toggleLike = (i) => setLikedDishes(prev => ({ ...prev, [i]: !prev[i] }));
+    const toggleLike = (id) => setLikedDishes(prev => ({ ...prev, [id]: !prev[id] }));
 
     return (
         <div className="home-page">
@@ -127,12 +127,66 @@ const Home = () => {
                     </div>
 
                     <div className="dishes-grid">
-                        {dishes.map((d, i) => (
-                            <DishCard key={i} dish={d} index={i}
-                                liked={!!likedDishes[i]}
-                                onLike={() => toggleLike(i)}
-                                visible={visibleDishes.includes(i)} />
-                        ))}
+                        {loading ? (
+                            <div className="pl-loader" style={{ gridColumn: '1/-1', minHeight: '200px' }}>
+                                <div className="pl-spinner" />
+                            </div>
+                        ) : (
+                            popularDishes.map((p, i) => (
+                                <DishCard
+                                    key={p.id}
+                                    dish={p}
+                                    index={i}
+                                    liked={!!likedDishes[p.id]}
+                                    onLike={() => toggleLike(p.id)}
+                                />
+                            ))
+                        )}
+                    </div>
+                </div>
+            </section>
+
+            {/* ── TESTIMONIALS / REVIEWS ── */}
+            <section className="testimonials-section">
+                <div className="container">
+                    <div className="section-header-centered">
+                        <span className="section-eyebrow centered">Google Reviews</span>
+                        <h2 className="section-title centered">What Our Clients Say</h2>
+                        <div className="overall-rating">
+                            <div className="stars">
+                                {[1, 2, 3, 4].map(i => <Star key={i} fill="#d4a017" stroke="#d4a017" size={20} />)}
+                                <Star fill="none" stroke="#d4a017" size={20} />
+                            </div>
+                            <span className="rating-num">4.0</span>
+                            <span className="review-count">(Based on Google Maps Reviews)</span>
+                        </div>
+                    </div>
+
+                    <div className="testimonials-grid">
+                        <TestimonialCard
+                            name="Local Guide"
+                            date="Dinner"
+                            text="Good burgers, a beautiful view, and a comfortable, family-friendly atmosphere."
+                            rating={4}
+                        />
+                        <TestimonialCard
+                            name="Pizza Lover"
+                            date="Excellent Service"
+                            text="Good pizza, excellent service! Great value for money (MAD 1–50)."
+                            rating={5}
+                        />
+                        <TestimonialCard
+                            name="Traditional Guest"
+                            date="Lunch"
+                            text="Moroccan couscous on Friday in a family atmosphere. Thank you to the restaurant staff for the warm welcome. Perfect for Moroccan and foreign guests."
+                            rating={5}
+                        />
+                    </div>
+
+                    <div className="testimonials-cta">
+                        <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" className="btn-review">
+                            Write a Review on Google
+                        </a>
                     </div>
                 </div>
             </section>
@@ -185,33 +239,54 @@ const InfoCard = ({ icon, title, line1, line2, link, href, to }) => (
     </div>
 );
 
-const DishCard = ({ dish, liked, onLike, visible }) => {
+const DishCard = ({ dish, liked, onLike }) => {
     const [hovered, setHovered] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const ref = useRef(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { threshold: 0.1 }
+        );
+        if (ref.current) observer.observe(ref.current);
+        return () => observer.disconnect();
+    }, []);
+
+    const firstImg = dish.images && dish.images.length > 0 ? dish.images[0] : null;
 
     return (
-        <div className={`dish-card ${visible ? 'dish-visible' : ''} ${hovered ? 'dish-hovered' : ''}`}
+        <div
+            ref={ref}
+            className={`dish-card ${visible ? 'dish-visible' : ''} ${hovered ? 'dish-hovered' : ''}`}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}>
 
             {/* Image container */}
             <div className="dish-img-wrap">
-                <img src={dish.img} alt={dish.name} className="dish-img" />
+                {firstImg ? (
+                    <img src={firstImg} alt={dish.name} className="dish-img" />
+                ) : (
+                    <div className="pc-img-fallback" style={{ height: '100%', display: 'flex' }}>🍽️</div>
+                )}
 
                 {/* Tag */}
-                <span className="dish-tag">{dish.tag}</span>
+                <span className="dish-tag">{dish.Category?.name || 'Popular'}</span>
 
                 {/* Like button */}
-                <button className={`dish-like ${liked ? 'liked' : ''}`} onClick={onLike}>
+                <button className={`dish-like ${liked ? 'liked' : ''}`} onClick={(e) => { e.preventDefault(); onLike(); }}>
                     <Heart size={16} fill={liked ? '#d4a017' : 'none'} stroke={liked ? '#d4a017' : '#fff'} />
                 </button>
 
                 {/* Hover overlay with quick-action icons */}
                 <div className="dish-hover-overlay">
-                    <Link to="/menu" className="dish-action-btn" title="View Details">
+                    <Link to={`/product/${dish.id}`} className="dish-action-btn" title="View Details">
                         <Eye size={18} />
-                    </Link>
-                    <Link to="/menu" className="dish-action-btn" title="Order Now">
-                        <ShoppingBag size={18} />
                     </Link>
                 </div>
             </div>
@@ -222,7 +297,7 @@ const DishCard = ({ dish, liked, onLike, visible }) => {
                     <h3 className="dish-name">{dish.name}</h3>
                     <span className="dish-price">MAD {dish.price}</span>
                 </div>
-                <p className="dish-desc">{dish.desc}</p>
+                <p className="dish-desc">{dish.description?.substring(0, 80)}...</p>
 
                 {/* Stars */}
                 <div className="dish-stars">
@@ -232,12 +307,37 @@ const DishCard = ({ dish, liked, onLike, visible }) => {
                     <span className="dish-rating-text">5.0</span>
                 </div>
 
-                <Link to="/menu" className="dish-order-btn">
+                <Link to={`/product/${dish.id}`} className="dish-order-btn">
                     <Utensils size={15} /> Order Now
                 </Link>
             </div>
         </div>
     );
 };
+
+const TestimonialCard = ({ name, date, text, rating }) => (
+    <div className="testimonial-card glass-card">
+        <div className="testimonial-header">
+            <div className="testimonial-user">
+                <div className="user-avatar">
+                    <User size={20} color="#fff" />
+                </div>
+                <div>
+                    <h4>{name}</h4>
+                    <span>{date}</span>
+                </div>
+            </div>
+            <div className="testimonial-quote">
+                <Quote size={24} fill="var(--primary-color)" stroke="none" opacity={0.3} />
+            </div>
+        </div>
+        <div className="testimonial-stars">
+            {[...Array(5)].map((_, i) => (
+                <Star key={i} size={14} fill={i < rating ? "#d4a017" : "none"} stroke="#d4a017" />
+            ))}
+        </div>
+        <p className="testimonial-text">"{text}"</p>
+    </div>
+);
 
 export default Home;

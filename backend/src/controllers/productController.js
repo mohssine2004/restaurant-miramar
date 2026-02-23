@@ -1,4 +1,4 @@
-const { Product, Category } = require('../../models');
+const { Product, Category, sequelize } = require('../../models');
 
 const getAllProducts = async (req, res) => {
     try {
@@ -28,7 +28,32 @@ const getProductById = async (req, res) => {
     }
 };
 
+const getPopularDishes = async (req, res) => {
+    try {
+        const categories = ['Plats Miramar', 'Plats Marocains', 'Plats Italiens'];
+        const popularDishes = [];
+
+        for (const catName of categories) {
+            const dish = await Product.findOne({
+                include: [{
+                    model: Category,
+                    where: { name: catName },
+                    attributes: ['name']
+                }],
+                order: sequelize.random() // Get a random one each time or just the first
+            });
+            if (dish) popularDishes.push(dish);
+        }
+
+        res.json(popularDishes);
+    } catch (error) {
+        console.error('Error fetching popular dishes:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
 module.exports = {
     getAllProducts,
-    getProductById
+    getProductById,
+    getPopularDishes
 };
